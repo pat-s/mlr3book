@@ -1,11 +1,10 @@
-# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
-
-os: linux
 language: r
 dist: bionic
-cache: packages
+cache:
+  - packages
+  - ccache
+
 latex: false
-r_github_packages: mlr-org/mlr3book
 
 addons:
   apt:
@@ -27,17 +26,23 @@ addons:
        - texlive-science
        - ttf-dejavu
 
+before_install:
+  - echo -e "options(Ncpus = 8, repos = structure(c(CRAN = 'https://cloud.r-project.org/')))" > $HOME/.Rprofile
+  - mkdir $HOME/.R && echo -e 'CXX_STD = CXX14\n\nCC=ccache gcc -std=gnu99\nCXX=ccache g++\nC11=ccache g++\nC14=ccache g++\nFC=ccache gfortran\nF77=ccache gfortran' > $HOME/.R/Makevars
+  - echo -e 'max_size = 5.0G\nsloppiness = include_file_ctime\nhash_dir=false' > $HOME/.ccache/ccache.conf
+  - R -q -e 'if (!requireNamespace("remotes")) install.packages("remotes")'
+  - R -q -e 'if (getRversion() < "3.2" && !requireNamespace("curl")) install.packages("curl")'
+  - R -q -e 'remotes::install_github("ropenscilabs/tic"); print(tic::dsl_load()); tic::prepare_all_stages()'
+  - R -q -e 'remotes::install_local()' # install mlr3book
+  - R -q -e 'tic::before_install()'
 
-script:
-  - make html
-  - make pdf
+install:
+  - R -q -e 'tic::install()'
+
+script: true
 
 deploy:
-  provider: pages
-  skip_cleanup: true
-  token: $GITHUB_TOKEN
-  local_dir: 'bookdown/_book'
-  keep_history: false
-  fqdn: mlr3book.mlr-org.com
+  provider: script
+  script: R -q -e 'tic::deploy()'
   on:
-    branch: master
+    all_branches: true
