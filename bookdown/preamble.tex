@@ -1,21 +1,17 @@
-% general koma settings
-\KOMAoptions{twoside=false, paper=a4, DIV=14, toc=bibliography }
-
-% header and footer
-\usepackage[autooneside=false,automark]{scrlayer-scrpage}
-\clearpairofpagestyles
-\KOMAoptions{headsepline = true}
-\ihead{\leftmark}
-\ohead{\rightmark}
-\cfoot{\pagemark}
-
 \usepackage{lmodern}
+
+\usepackage{scrlayer-scrpage}
+\KOMAoptions{headsepline = true}
+
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage[bf,singlelinecheck=off]{caption}
 \usepackage{textcomp} % for real copyright sign
 
 \setcounter{secnumdepth}{3}
+
+\usepackage{framed,color}
+\definecolor{shadecolor}{RGB}{248,248,248}
 
 \ifxetex
   \usepackage{letltxmacro}
@@ -52,8 +48,65 @@
     urlcolor=myurlcolor!\myshade!black
 }
 
+\makeatletter
+\newenvironment{kframe}{%
+\medskip{}
+\setlength{\fboxsep}{.8em}
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\makeatletter
+\@ifundefined{Shaded}{
+}{\renewenvironment{Shaded}{\begin{kframe}}{\end{kframe}}}
+\makeatother
+
+\newenvironment{rmdblock}[1]
+  {
+  \begin{itemize}
+  \renewcommand{\labelitemi}{
+    \raisebox{-.7\height}[0pt][0pt]{
+      {\setkeys{Gin}{width=3em,keepaspectratio}\includegraphics{images/#1}}
+    }
+  }
+  \setlength{\fboxsep}{1em}
+  \begin{kframe}
+  \item
+  }
+  {
+  \end{kframe}
+  \end{itemize}
+  }
+\newenvironment{note}
+  {\begin{rmdblock}{note}}
+  {\end{rmdblock}}
+\newenvironment{caution}
+  {\begin{rmdblock}{caution}}
+  {\end{rmdblock}}
+\newenvironment{important}
+  {\begin{rmdblock}{important}}
+  {\end{rmdblock}}
+\newenvironment{tip}
+  {\begin{rmdblock}{tip}}
+  {\end{rmdblock}}
+\newenvironment{warning}
+  {\begin{rmdblock}{warning}}
+  {\end{rmdblock}}
+
 \urlstyle{tt}
 
-\renewenvironment{Shaded} {\begin{snugshade}\small} {\end{snugshade}}
+\makeatother
 
-\titlehead{\centering\includegraphics[width=6cm]{images/logo.pdf}}
+ \renewenvironment{Shaded} {\begin{snugshade}\small} {\end{snugshade}}
