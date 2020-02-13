@@ -5,7 +5,7 @@
 
 Package to build the [mlr3](https://mlr3.mlr-org.com) [bookdown](https://bookdown.org/) book.
 
-**This version comes with opinionated design differences compared to the original mlr3book**
+**This fork comes with opinionated design choices with differ to the original mlr3book.**
 
 ## Rendered Versions
 
